@@ -3,22 +3,11 @@
 
 import { useState } from 'react';
 import LessonCard from '../../../components/LessonCard';
+import { Lesson } from '@/types';
 
-type UserRole = 'student' | 'tutor';
-
-interface Lesson {
-  id: string;
-  studentName: string;
-  tutorName: string;
-  dateTime: string;
-  rescheduleRequest?: {
-    proposedDateTime: string;
-    requestedBy: UserRole;
-  };
-}
 
 export default function TutorPage() {
-  const [lessons] = useState<Lesson[]>([
+  const [lessons, setLessons] = useState<Lesson[]>([
     {
       id: '1',
       studentName: 'Alice Student',
@@ -38,9 +27,20 @@ export default function TutorPage() {
     }
   ]);
 
-  const handleReschedule = (lessonId: string, newDateTime: string) => {
+  const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
     console.log('Requesting reschedule:', { lessonId, newDateTime });
-    // Will add actual functionality later
+    // Implement the actual rescheduling logic here
+    setLessons(prevLessons => prevLessons.map(lesson => 
+      lesson.id === lessonId
+        ? {
+            ...lesson,
+            rescheduleRequest: {
+              proposedDateTime: newDateTime,
+              requestedBy: 'tutor'
+            }
+          }
+        : lesson
+    ));
   };
 
   return (
@@ -52,7 +52,7 @@ export default function TutorPage() {
             key={lesson.id}
             lesson={lesson}
             userRole="tutor"
-            onRequestReschedule={handleReschedule}
+            onRescheduleRequest={handleRescheduleRequest}
           />
         ))}
       </div>

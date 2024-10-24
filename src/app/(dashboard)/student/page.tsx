@@ -1,35 +1,21 @@
-// src/app/(dashboard)/student/page.tsx
 'use client';
 
 import { useState } from 'react';
 import LessonCard from '../../../components/LessonCard';
-
-type UserRole = 'student' | 'tutor';
-
-interface Lesson {
-  id: string;
-  studentName: string;
-  tutorName: string;
-  dateTime: string;
-  rescheduleRequest?: {
-    proposedDateTime: string;
-    requestedBy: UserRole;
-  };
-}
+import { Lesson } from '@/types';
 
 export default function StudentPage() {
-  const [lessons] = useState<Lesson[]>([
+  const [lessons, setLessons] = useState<Lesson[]>([
     {
       id: '1',
-      studentName: 'John Student',
-      tutorName: 'Mary Tutor',
+      studentName: 'Alice Student',
+      tutorName: 'Jane Tutor',
       dateTime: '2024-10-25T15:00:00'
-      // rescheduleRequest is undefined by default
     },
     {
       id: '2',
-      studentName: 'John Student',
-      tutorName: 'Bob Teacher',
+      studentName: 'Alice Student',
+      tutorName: 'John Tutor',
       dateTime: '2024-10-26T16:00:00',
       rescheduleRequest: {
         proposedDateTime: '2024-10-27T16:00:00',
@@ -38,9 +24,19 @@ export default function StudentPage() {
     }
   ]);
 
-  const handleReschedule = (lessonId: string, newDateTime: string) => {
+  const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
     console.log('Requesting reschedule:', { lessonId, newDateTime });
-    // Will add actual functionality later
+    setLessons(prevLessons => prevLessons.map(lesson => 
+      lesson.id === lessonId
+        ? {
+            ...lesson,
+            rescheduleRequest: {
+              proposedDateTime: newDateTime,
+              requestedBy: 'student'
+            }
+          }
+        : lesson
+    ));
   };
 
   return (
@@ -52,7 +48,7 @@ export default function StudentPage() {
             key={lesson.id}
             lesson={lesson}
             userRole="student"
-            onRequestReschedule={handleReschedule}
+            onRescheduleRequest={handleRescheduleRequest}
           />
         ))}
       </div>

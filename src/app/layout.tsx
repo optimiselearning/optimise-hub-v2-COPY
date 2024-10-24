@@ -6,7 +6,7 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Tutoring Scheduler',
+  title: 'OL Hub v2',
   description: 'Schedule and manage tutoring sessions',
 }
 
