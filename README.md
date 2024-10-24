@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+ol hub v2
 
-## Getting Started
 
-First, run the development server:
+# Implementation Roadmap
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Current Implementation
+- Next.js 13+ App Router structure
+- Landing page with student/tutor options
+- Dashboard layout with basic navigation
+- LessonCard component
+- Student and Tutor dashboard pages with mock data
+
+## Core Types
+```typescript
+type UserRole = 'student' | 'tutor';
+
+interface Lesson {
+  id: string;
+  studentName: string;
+  tutorName: string;
+  dateTime: string;
+  rescheduleRequest?: {
+    proposedDateTime: string;
+    requestedBy: UserRole;
+  };
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Structure
+```
+src/
+├── app/
+│   ├── (dashboard)/
+│   │   ├── layout.tsx   (dashboard wrapper)
+│   │   ├── student/
+│   │   │   └── page.tsx (student view)
+│   │   └── tutor/
+│   │       └── page.tsx (tutor view)
+│   └── page.tsx         (landing page)
+└── components/
+    └── LessonCard.tsx   (shared component)
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Implementation Stages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 1. Core Scheduling Logic
+```typescript
+// State Management in Dashboards
+const [lessons, setLessons] = useState<Lesson[]>([...mockData]);
 
-## Learn More
+// Required Functions
+- requestReschedule(lessonId: string, newDateTime: string)
+- acceptReschedule(lessonId: string)
+- declineReschedule(lessonId: string)
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### LessonCard Updates
+- Implement handleReschedule function
+- Add accept/decline functionality
+- Add basic date selection for new times
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Testing Workflows
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### Student View (/student)
+- View all their lessons
+- Request reschedule for a lesson
+- Accept/decline tutor's reschedule requests
 
-## Deploy on Vercel
+#### Tutor View (/tutor)
+- View all lessons for all students
+- Request reschedule for any lesson
+- Accept/decline student's reschedule requests
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### Shared Features
+- Current lesson times display
+- Pending reschedule requests
+- Success/error states for actions
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. UI Enhancements
+
+#### Basic Feedback
+- Success/error messages for actions
+- Loading states during updates
+- Confirmation dialogs for accept/decline actions
+
+#### Date Selection
+- Implement simple date/time picker
+- Add time validation
+- Display available time slots
+
+### 4. Future Enhancements (Post-MVP)
+- Calendar view for lessons
+- Filter and sort functionality
+- Reschedule request history
+- Basic UI notifications
+- Authentication integration
+- Database integration
+
+## Design Notes
+- Minimal black/white color scheme
+- Clean UI with hover effects
+- Consistent button styling
+- Mobile-responsive layouts
+
+## Testing Without Auth
+Current pseudo-login system allows testing of all core functionality:
+- Student flow via /student route
+- Tutor flow via /tutor route
+- All scheduling features testable without auth
+
+## Next Immediate Steps
+1. Implement basic reschedule request functionality
+2. Add accept/decline logic
+3. Integrate simple date selection
+4. Add basic success/error feedback
+
+## Notes
+- Keep functionality minimal but complete
+- Focus on core scheduling features first
+- Maintain consistent UI/UX
+- Prioritize mobile responsiveness
