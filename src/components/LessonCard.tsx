@@ -14,7 +14,7 @@ function formatDate(dateString: string) {
   });
 }
 
-export default function LessonCard({ lesson, userRole, onRescheduleRequest }: LessonCardProps) {
+export default function LessonCard({ lesson, userRole, onRescheduleRequest, onAcceptReschedule, onDeclineReschedule }: LessonCardProps) {
   const [newDateTime, setNewDateTime] = useState('');
   const [showRescheduleForm, setShowRescheduleForm] = useState(false);
   
@@ -40,42 +40,60 @@ export default function LessonCard({ lesson, userRole, onRescheduleRequest }: Le
       <p className="mb-2">Scheduled Time: {formatDate(lesson.dateTime)}</p>
       
       {!lesson.rescheduleRequest ? (
-        <div className="mt-2">
-          {!showRescheduleForm ? (
-            <button
-              onClick={() => setShowRescheduleForm(true)}
-              className="bg-black border border-black hover:bg-white hover:border-black hover:text-black text-white px-4 py-2 rounded"
-            >
-              Request Reschedule
-            </button>
-          ) : (
-            <div>
-              <input
-                type="datetime-local"
-                value={newDateTime}
-                onChange={(e) => setNewDateTime(e.target.value)}
-                className="border p-2 mr-2"
-              />
+        userRole !== 'admin' && (
+          <div className="mt-2">
+            {!showRescheduleForm ? (
               <button
-                onClick={handleRescheduleRequest}
-                className="text-black bg-white border hover:bg-black hover:text-white border-black px-2 py-1 rounded mr-4"
+                onClick={() => setShowRescheduleForm(true)}
+                className="bg-black border border-black hover:bg-white hover:border-black hover:text-black text-white px-4 py-2 rounded"
               >
-                Confirm
+                Request Reschedule
               </button>
-              <button
-                onClick={() => setShowRescheduleForm(false)}
-                className="text-black hover:font-semibold"
-              >
-                Undo
-              </button>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div>
+                <input
+                  type="datetime-local"
+                  value={newDateTime}
+                  onChange={(e) => setNewDateTime(e.target.value)}
+                  className="border p-2 mr-2"
+                />
+                <button
+                  onClick={handleRescheduleRequest}
+                  className="text-black bg-white border hover:bg-black hover:text-white border-black px-2 py-1 rounded mr-4"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => setShowRescheduleForm(false)}
+                  className="text-black hover:font-semibold"
+                >
+                  Undo
+                </button>
+              </div>
+            )}
+          </div>
+        )
       ) : (
         <div className="mt-2 bg-gray-100 p-2 rounded">
           <p className="font-semibold">Pending Reschedule Request</p>
           <p>Proposed Time: {formatDate(lesson.rescheduleRequest.proposedDateTime)}</p>
           <p>Requested by: <span className="capitalize font-semibold">{lesson.rescheduleRequest.requestedBy}</span></p>
+          {userRole === 'admin' && (
+            <div className="mt-2">
+              <button
+                onClick={() => onAcceptReschedule && onAcceptReschedule(lesson.id)}
+                className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+              >
+                Accept
+              </button>
+              <button
+                onClick={() => onDeclineReschedule && onDeclineReschedule(lesson.id)}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Decline
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

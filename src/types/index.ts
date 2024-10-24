@@ -1,4 +1,4 @@
-export type UserRole = 'student' | 'tutor';
+export type UserRole = 'student' | 'tutor' | 'admin';
 
 export interface Lesson {
   id: string;
@@ -15,4 +15,6 @@ export interface LessonCardProps {
   lesson: Lesson;
   userRole: UserRole;
   onRescheduleRequest: (lessonId: string, newDateTime: string) => void;
+  onAcceptReschedule?: (lessonId: string) => void;
+  onDeclineReschedule?: (lessonId: string) => void;
 }
