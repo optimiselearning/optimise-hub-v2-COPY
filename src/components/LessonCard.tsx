@@ -82,13 +82,13 @@ export default function LessonCard({ lesson, userRole, onRescheduleRequest, onAc
             <div className="mt-2">
               <button
                 onClick={() => onAcceptReschedule && onAcceptReschedule(lesson.id)}
-                className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                className="bg-white border border-black hover:bg-black hover:border-black hover:text-white text-black px-4 py-2 rounded mr-2"
               >
                 Accept
               </button>
               <button
                 onClick={() => onDeclineReschedule && onDeclineReschedule(lesson.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded"
+                className="bg-black border border-black hover:bg-white hover:border-black hover:text-black text-white px-4 py-2 rounded"
               >
                 Decline
               </button>
