@@ -7,11 +7,29 @@ export default function DashboardLayout({
     return (
       <div className="min-h-screen bg-white">
         <nav className="border-b border-black/10">
-          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            <span className="text-xl font-semibold">OL Hub v2</span>
+          <div className="max-w-7xl mx-auto px-4 h-16 flex items-center">
+            <span className="text-xl font-semibold mr-10">OL Hub v2</span>
+            <a 
+          href="/student"
+          className="block w-36 text-black hover:font-bold"
+        >
+          Student Login
+        </a>
+        <a 
+          href="/tutor" 
+          className="block w-36 text-black hover:font-bold"
+        >
+          Tutor Login
+        </a>
+        <a 
+          href="/admin" 
+          className="block w-36 text-black hover:font-bold"
+        >
+          Admin Login
+        </a>
             <a 
               href="/" 
-              className="px-4 py-2 border border-black rounded-lg hover:bg-black hover:text-white transition-colors"
+              className="hover:font-semibold"
             >
               Logout
             </a>

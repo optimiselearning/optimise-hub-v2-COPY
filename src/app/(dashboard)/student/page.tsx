@@ -25,7 +25,6 @@ export default function StudentPage() {
   ]);
 
   const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
-    console.log('Requesting reschedule:', { lessonId, newDateTime });
     setLessons(prevLessons => prevLessons.map(lesson => 
       lesson.id === lessonId
         ? {
@@ -35,6 +34,22 @@ export default function StudentPage() {
               requestedBy: 'student'
             }
           }
+        : lesson
+    ));
+  };
+
+  const handleAcceptReschedule = (lessonId: string) => {
+    setLessons(prevLessons => prevLessons.map(lesson =>
+      lesson.id === lessonId
+        ? { ...lesson, dateTime: lesson.rescheduleRequest!.proposedDateTime, rescheduleRequest: undefined }
+        : lesson
+    ));
+  };
+
+  const handleDeclineReschedule = (lessonId: string) => {
+    setLessons(prevLessons => prevLessons.map(lesson =>
+      lesson.id === lessonId
+        ? { ...lesson, rescheduleRequest: undefined }
         : lesson
     ));
   };
@@ -49,6 +64,8 @@ export default function StudentPage() {
             lesson={lesson}
             userRole="student"
             onRescheduleRequest={handleRescheduleRequest}
+            onAcceptReschedule={handleAcceptReschedule}
+            onDeclineReschedule={handleDeclineReschedule}
           />
         ))}
       </div>
