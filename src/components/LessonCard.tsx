@@ -78,7 +78,7 @@ export default function LessonCard({ lesson, userRole, onRescheduleRequest, onAc
           <p className="font-semibold">Pending Reschedule Request</p>
           <p>Proposed Time: {formatDate(lesson.rescheduleRequest.proposedDateTime)}</p>
           <p>Requested by: <span className="capitalize font-semibold">{lesson.rescheduleRequest.requestedBy}</span></p>
-          {userRole === 'admin' && (
+          {(userRole === 'admin' || userRole !== lesson.rescheduleRequest.requestedBy) && (
             <div className="mt-2">
               <button
                 onClick={() => onAcceptReschedule && onAcceptReschedule(lesson.id)}

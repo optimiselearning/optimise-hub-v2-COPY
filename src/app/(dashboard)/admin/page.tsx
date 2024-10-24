@@ -35,6 +35,7 @@ export default function AdminPage() {
         ? { ...lesson, dateTime: lesson.rescheduleRequest!.proposedDateTime, rescheduleRequest: undefined }
         : lesson
     ));
+    console.log(`Admin: Reschedule request for lesson ${lessonId} has been accepted.`);
   };
 
   const handleDeclineReschedule = (lessonId: string) => {
@@ -43,6 +44,7 @@ export default function AdminPage() {
         ? { ...lesson, rescheduleRequest: undefined }
         : lesson
     ));
+    console.log(`Admin: Reschedule request for lesson ${lessonId} has been declined.`);
   };
 
   return (
