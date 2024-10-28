@@ -27,6 +27,12 @@ export default function DashboardLayout({
         >
           Admin Login
         </a>
+        <a 
+          href="/user-feed" 
+          className="block w-36 text-black hover:font-bold"
+        >
+          User Feed
+        </a>
             <a 
               href="/" 
               className="hover:font-semibold"

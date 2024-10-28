@@ -2,11 +2,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useFeed } from '@/contexts/FeedContext';
 import LessonCard from '../../../components/LessonCard';
 import { Lesson } from '@/types';
 
 
 export default function TutorPage() {
+  const { addFeedEvent } = useFeed();
   const [lessons, setLessons] = useState<Lesson[]>([
     {
       id: '1',
@@ -28,6 +30,9 @@ export default function TutorPage() {
   ]);
 
   const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson) return;
+
     setLessons(prevLessons => prevLessons.map(lesson => 
       lesson.id === lessonId
         ? {
@@ -39,22 +44,64 @@ export default function TutorPage() {
           }
         : lesson
     ));
+
+    addFeedEvent({
+      action: 'reschedule_requested',
+      lessonId,
+      initiatedBy: 'tutor',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        oldDateTime: lesson.dateTime,
+        newDateTime: newDateTime
+      }
+    });
   };
 
   const handleAcceptReschedule = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson || !lesson.rescheduleRequest) return;
+
     setLessons(prevLessons => prevLessons.map(lesson =>
       lesson.id === lessonId
         ? { ...lesson, dateTime: lesson.rescheduleRequest!.proposedDateTime, rescheduleRequest: undefined }
         : lesson
     ));
+
+    addFeedEvent({
+      action: 'reschedule_accepted',
+      lessonId,
+      initiatedBy: 'tutor',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        oldDateTime: lesson.dateTime,
+        newDateTime: lesson.rescheduleRequest!.proposedDateTime
+      }
+    });
   };
 
   const handleDeclineReschedule = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson || !lesson.rescheduleRequest) return;
+
     setLessons(prevLessons => prevLessons.map(lesson =>
       lesson.id === lessonId
         ? { ...lesson, rescheduleRequest: undefined }
         : lesson
     ));
+
+    addFeedEvent({
+      action: 'reschedule_declined',
+      lessonId,
+      initiatedBy: 'tutor',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        oldDateTime: lesson.dateTime,
+        newDateTime: lesson.rescheduleRequest!.proposedDateTime
+      }
+    });
   };
 
   return (

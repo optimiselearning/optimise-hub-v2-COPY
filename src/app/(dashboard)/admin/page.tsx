@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import LessonCard from '../../../components/LessonCard';
-import { Lesson } from '@/types';
+import { Lesson, FeedEvent } from '@/types';
 
 export default function AdminPage() {
   const [lessons, setLessons] = useState<Lesson[]>([
@@ -24,9 +24,45 @@ export default function AdminPage() {
       }
     }
   ]);
+  
+  const [feedEvents, setFeedEvents] = useState<FeedEvent[]>([]);
+
+  const addFeedEvent = (event: Omit<FeedEvent, 'id' | 'timestamp'>) => {
+    const newEvent: FeedEvent = {
+      ...event,
+      id: Math.random().toString(36).substr(2, 9),
+      timestamp: new Date().toISOString()
+    };
+    setFeedEvents(prev => [newEvent, ...prev]);
+  };
 
   const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
-    console.log('Admin notified of reschedule request:', { lessonId, newDateTime });
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson) return;
+
+    setLessons(prevLessons => prevLessons.map(lesson => 
+      lesson.id === lessonId
+        ? {
+            ...lesson,
+            rescheduleRequest: {
+              proposedDateTime: newDateTime,
+              requestedBy: 'admin'
+            }
+          }
+        : lesson
+    ));
+
+    addFeedEvent({
+      action: 'reschedule_requested',
+      lessonId,
+      initiatedBy: 'admin',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        oldDateTime: lesson.dateTime,
+        newDateTime
+      }
+    });
   };
 
   const handleAcceptReschedule = (lessonId: string) => {

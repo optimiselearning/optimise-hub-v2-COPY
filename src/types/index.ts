@@ -18,3 +18,17 @@ export interface LessonCardProps {
   onAcceptReschedule?: (lessonId: string) => void;
   onDeclineReschedule?: (lessonId: string) => void;
 }
+
+export interface FeedEvent {
+  id: string;
+  timestamp: string;
+  action: 'reschedule_requested' | 'reschedule_accepted' | 'reschedule_declined';
+  lessonId: string;
+  initiatedBy: UserRole;
+  details: {
+    studentName: string;
+    tutorName: string;
+    oldDateTime?: string;
+    newDateTime?: string;
+  };
+}
