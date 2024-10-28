@@ -83,7 +83,7 @@ export default function UserFeed() {
         {feedEvents.length > 0 && (
           <button
             onClick={resolveAll}
-            className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80 transition-colors"
+            className="px-2 py-1 text-sm font-bold text-black bg-white border border-black hover:bg-black hover:text-white transition-colors"
           >
             Resolve All
           </button>
