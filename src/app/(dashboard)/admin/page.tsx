@@ -1,30 +1,22 @@
 // src/app/(dashboard)/admin/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useLessonStore } from '@/store/lessonStore';
 import LessonCard from '../../../components/LessonCard';
 import { Lesson, FeedEvent } from '@/types';
-
+import { useState } from 'react';
 export default function AdminPage() {
-  const [lessons, setLessons] = useState<Lesson[]>([
-    {
-      id: '1',
-      studentName: 'Alice Student',
-      tutorName: 'Jane Tutor',
-      dateTime: '2024-10-25T15:00:00'
-    },
-    {
-      id: '2',
-      studentName: 'Bob Student',
-      tutorName: 'John Tutor',
-      dateTime: '2024-10-26T16:00:00',
-      rescheduleRequest: {
-        proposedDateTime: '2024-10-27T16:00:00',
-        requestedBy: 'tutor'
-      }
-    }
-  ]);
-  
+  const { lessons, createLesson, updateLesson, deleteLesson } = useLessonStore();
+
+  // Example function to create a new lesson
+  const handleCreateLesson = () => {
+    createLesson({
+      studentName: 'New Student',
+      tutorName: 'New Tutor',
+      dateTime: new Date().toISOString()
+    });
+  };
+
   const [feedEvents, setFeedEvents] = useState<FeedEvent[]>([]);
 
   const addFeedEvent = (event: Omit<FeedEvent, 'id' | 'timestamp'>) => {
@@ -40,17 +32,12 @@ export default function AdminPage() {
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
-    setLessons(prevLessons => prevLessons.map(lesson => 
-      lesson.id === lessonId
-        ? {
-            ...lesson,
-            rescheduleRequest: {
-              proposedDateTime: newDateTime,
-              requestedBy: 'admin'
-            }
-          }
-        : lesson
-    ));
+    updateLesson(lessonId, {
+      rescheduleRequest: {
+        proposedDateTime: newDateTime,
+        requestedBy: 'admin'
+      }
+    });
 
     addFeedEvent({
       action: 'reschedule_requested',
@@ -66,26 +53,29 @@ export default function AdminPage() {
   };
 
   const handleAcceptReschedule = (lessonId: string) => {
-    setLessons(prevLessons => prevLessons.map(lesson =>
-      lesson.id === lessonId
-        ? { ...lesson, dateTime: lesson.rescheduleRequest!.proposedDateTime, rescheduleRequest: undefined }
-        : lesson
-    ));
+    updateLesson(lessonId, {
+      dateTime: lessons.find(l => l.id === lessonId)!.rescheduleRequest!.proposedDateTime,
+      rescheduleRequest: undefined
+    });
     console.log(`Admin: Reschedule request for lesson ${lessonId} has been accepted.`);
   };
 
   const handleDeclineReschedule = (lessonId: string) => {
-    setLessons(prevLessons => prevLessons.map(lesson =>
-      lesson.id === lessonId
-        ? { ...lesson, rescheduleRequest: undefined }
-        : lesson
-    ));
+    updateLesson(lessonId, {
+      rescheduleRequest: undefined
+    });
     console.log(`Admin: Reschedule request for lesson ${lessonId} has been declined.`);
   };
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
+      <button 
+        onClick={handleCreateLesson}
+        className="mb-4 px-2 py-1 bg-white border border-black font-semibold text-black text-sm hover:bg-black hover:text-white"
+      >
+        Add New Lesson
+      </button>
       <div className="space-y-4">
         {lessons.map(lesson => (
           <LessonCard

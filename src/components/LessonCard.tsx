@@ -14,7 +14,12 @@ function formatDate(dateString: string) {
   });
 }
 
-export default function LessonCard({ lesson, userRole, onRescheduleRequest, onAcceptReschedule, onDeclineReschedule }: LessonCardProps) {
+export default function LessonCard({
+  lesson,
+  userRole,
+  onRescheduleRequest,
+  onAcceptReschedule,
+  onDeclineReschedule}: LessonCardProps) {
   const [newDateTime, setNewDateTime] = useState('');
   const [showRescheduleForm, setShowRescheduleForm] = useState(false);
   

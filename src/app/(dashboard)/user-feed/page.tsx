@@ -21,9 +21,8 @@ function formatDate(dateString: string) {
     hour12: false
   });
 }
-
 export default function UserFeed() {
-  const { feedEvents, addTestEvents } = useLessonStore();
+  const { feedEvents } = useLessonStore();
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const { resolvedEvents, setResolvedEvents } = useResolvedEvents();
 
@@ -34,7 +33,13 @@ export default function UserFeed() {
       addTestEvents();
       localStorage.setItem('hasAddedEvents', 'true');
     }
-  }, [feedEvents.length, addTestEvents]);
+
+    // Set all unresolved events as expanded by default
+    const unresolvedEvents = feedEvents
+      .filter(event => !resolvedEvents.has(event.id))
+      .map(event => event.id);
+    setExpandedEvents(new Set(unresolvedEvents));
+  }, [feedEvents, resolvedEvents]);
 
   const toggleExpand = (eventId: string) => {
     setExpandedEvents(prev => {
@@ -196,3 +201,7 @@ export default function UserFeed() {
     </main>
   );
 }
+function addTestEvents() {
+    throw new Error('Function not implemented.');
+}
+
