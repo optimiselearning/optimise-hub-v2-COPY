@@ -64,9 +64,31 @@ export default function UserFeed() {
     localStorage.setItem('resolvedEvents', JSON.stringify(Array.from(newSet)));
   };
 
+  const resolveAll = () => {
+    const newSet = new Set(resolvedEvents);
+    feedEvents.forEach(event => {
+      newSet.add(event.id);
+    });
+    setResolvedEvents(newSet);
+    localStorage.setItem('resolvedEvents', JSON.stringify(Array.from(newSet)));
+    
+    // Clear all expanded states
+    setExpandedEvents(new Set());
+  };
+
   return (
     <main className="p-4">
-      <h1 className="text-2xl font-bold mb-6">Activity Feed</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Activity Feed</h1>
+        {feedEvents.length > 0 && (
+          <button
+            onClick={resolveAll}
+            className="px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80 transition-colors"
+          >
+            Resolve All
+          </button>
+        )}
+      </div>
       <div className="space-y-4">
         {feedEvents.map(event => (
           <div 
