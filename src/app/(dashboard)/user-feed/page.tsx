@@ -5,6 +5,7 @@ import { useLessonStore } from '@/store/lessonStore';
 import { FeedEvent } from '@/types';
 import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Popover } from '@headlessui/react';
+import { useResolvedEvents } from '@/contexts/ResolvedEventsContext';
 // Removed the Tooltip import due to the error
 
 // Helper function for consistent date formatting
@@ -24,12 +25,16 @@ function formatDate(dateString: string) {
 export default function UserFeed() {
   const { feedEvents, addTestEvents } = useLessonStore();
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
-  const [resolvedEvents, setResolvedEvents] = useState<Set<string>>(new Set());
+  const { resolvedEvents, setResolvedEvents } = useResolvedEvents();
 
   useEffect(() => {
-    // Add test events without clearing existing ones
-    addTestEvents();
-  }, []); // Empty dependency array means this runs once on mount
+    // Only add test events if there are none
+    const hasAddedEvents = localStorage.getItem('hasAddedEvents');
+    if (!hasAddedEvents && feedEvents.length === 0) {
+      addTestEvents();
+      localStorage.setItem('hasAddedEvents', 'true');
+    }
+  }, [feedEvents.length, addTestEvents]);
 
   const toggleExpand = (eventId: string) => {
     setExpandedEvents(prev => {
@@ -44,20 +49,19 @@ export default function UserFeed() {
   };
 
   const toggleResolved = (eventId: string) => {
-    setResolvedEvents(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(eventId)) {
-        newSet.delete(eventId);
-      } else {
-        newSet.add(eventId);
-        setExpandedEvents(prev => {
-          const newExpandedSet = new Set(prev);
-          newExpandedSet.delete(eventId);
-          return newExpandedSet;
-        });
-      }
-      return newSet;
-    });
+    const newSet = new Set(resolvedEvents);
+    if (newSet.has(eventId)) {
+      newSet.delete(eventId);
+    } else {
+      newSet.add(eventId);
+      setExpandedEvents(prev => {
+        const newExpandedSet = new Set(prev);
+        newExpandedSet.delete(eventId);
+        return newExpandedSet;
+      });
+    }
+    setResolvedEvents(newSet);
+    localStorage.setItem('resolvedEvents', JSON.stringify(Array.from(newSet)));
   };
 
   return (
