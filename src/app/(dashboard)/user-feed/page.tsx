@@ -157,8 +157,8 @@ export default function UserFeed() {
                   </div>
                   {event.details.oldDateTime && event.details.newDateTime && (
                     <div className="mt-2 text-sm">
-                      <div><span className="font-semibold">From:</span> <span className="text-black"> {formatDate(event.details.oldDateTime)}</span></div>
-                      <div><span className="font-semibold">To:</span> <span className="text-black"> {formatDate(event.details.newDateTime)}</span></div>
+                      <div><span className="font-semibold">Original:</span> <span className="text-black"> {formatDate(event.details.oldDateTime)}</span></div>
+                      <div><span className="font-semibold">Requested:</span> <span className="text-black"> {formatDate(event.details.newDateTime)}</span></div>
                     </div>
                   )}
                 </div>
