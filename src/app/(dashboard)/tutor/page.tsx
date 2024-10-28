@@ -1,49 +1,22 @@
 // src/app/(dashboard)/tutor/page.tsx
 'use client';
 
-import { useState } from 'react';
-import { useFeed } from '@/contexts/FeedContext';
+import { useLessonStore } from '@/store/lessonStore';
 import LessonCard from '../../../components/LessonCard';
-import { Lesson } from '@/types';
-
 
 export default function TutorPage() {
-  const { addFeedEvent } = useFeed();
-  const [lessons, setLessons] = useState<Lesson[]>([
-    {
-      id: '1',
-      studentName: 'Alice Student',
-      tutorName: 'Jane Tutor',
-      dateTime: '2024-10-25T15:00:00'
-      // rescheduleRequest is undefined by default
-    },
-    {
-      id: '2',
-      studentName: 'Bob Student',
-      tutorName: 'Jane Tutor',
-      dateTime: '2024-10-26T16:00:00',
-      rescheduleRequest: {
-        proposedDateTime: '2024-10-27T16:00:00',
-        requestedBy: 'student'
-      }
-    }
-  ]);
+  const { lessons, addFeedEvent, updateLesson } = useLessonStore();
 
   const handleRescheduleRequest = (lessonId: string, newDateTime: string) => {
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
-    setLessons(prevLessons => prevLessons.map(lesson => 
-      lesson.id === lessonId
-        ? {
-            ...lesson,
-            rescheduleRequest: {
-              proposedDateTime: newDateTime,
-              requestedBy: 'tutor'
-            }
-          }
-        : lesson
-    ));
+    updateLesson(lessonId, {
+      rescheduleRequest: {
+        proposedDateTime: newDateTime,
+        requestedBy: 'tutor'
+      }
+    });
 
     addFeedEvent({
       action: 'reschedule_requested',
@@ -62,11 +35,10 @@ export default function TutorPage() {
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson || !lesson.rescheduleRequest) return;
 
-    setLessons(prevLessons => prevLessons.map(lesson =>
-      lesson.id === lessonId
-        ? { ...lesson, dateTime: lesson.rescheduleRequest!.proposedDateTime, rescheduleRequest: undefined }
-        : lesson
-    ));
+    updateLesson(lessonId, { 
+      dateTime: lesson.rescheduleRequest.proposedDateTime, 
+      rescheduleRequest: undefined 
+    });
 
     addFeedEvent({
       action: 'reschedule_accepted',
@@ -76,7 +48,7 @@ export default function TutorPage() {
         studentName: lesson.studentName,
         tutorName: lesson.tutorName,
         oldDateTime: lesson.dateTime,
-        newDateTime: lesson.rescheduleRequest!.proposedDateTime
+        newDateTime: lesson.rescheduleRequest.proposedDateTime
       }
     });
   };
@@ -85,11 +57,7 @@ export default function TutorPage() {
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson || !lesson.rescheduleRequest) return;
 
-    setLessons(prevLessons => prevLessons.map(lesson =>
-      lesson.id === lessonId
-        ? { ...lesson, rescheduleRequest: undefined }
-        : lesson
-    ));
+    updateLesson(lessonId, { rescheduleRequest: undefined });
 
     addFeedEvent({
       action: 'reschedule_declined',
@@ -99,7 +67,7 @@ export default function TutorPage() {
         studentName: lesson.studentName,
         tutorName: lesson.tutorName,
         oldDateTime: lesson.dateTime,
-        newDateTime: lesson.rescheduleRequest!.proposedDateTime
+        newDateTime: lesson.rescheduleRequest.proposedDateTime
       }
     });
   };

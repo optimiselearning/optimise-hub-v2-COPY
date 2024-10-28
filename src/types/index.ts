@@ -25,6 +25,7 @@ export interface FeedEvent {
   action: 'reschedule_requested' | 'reschedule_accepted' | 'reschedule_declined';
   lessonId: string;
   initiatedBy: UserRole;
+  resolved?: boolean;
   details: {
     studentName: string;
     tutorName: string;
