@@ -19,7 +19,9 @@ export default function LessonCard({
   userRole,
   onRescheduleRequest,
   onAcceptReschedule,
-  onDeclineReschedule}: LessonCardProps) {
+  onDeclineReschedule,
+  onDelete
+}: LessonCardProps) {
   const [newDateTime, setNewDateTime] = useState('');
   const [showRescheduleForm, setShowRescheduleForm] = useState(false);
   

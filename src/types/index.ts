@@ -17,6 +17,7 @@ export interface LessonCardProps {
   onRescheduleRequest: (lessonId: string, newDateTime: string) => void;
   onAcceptReschedule?: (lessonId: string) => void;
   onDeclineReschedule?: (lessonId: string) => void;
+  onDelete?: (lessonId: string) => void;
 }
 
 export interface FeedEvent {

@@ -9,6 +9,7 @@ interface LessonStore {
   deleteLesson: (lessonId: string) => void;
   addFeedEvent: (event: Omit<FeedEvent, 'id' | 'timestamp'>) => void;
   updateLesson: (lessonId: string, updates: Partial<Lesson>) => void;
+  clearFeedEvents: () => void;
 }
 
 export const useLessonStore = create<LessonStore>()(
@@ -29,6 +30,9 @@ export const useLessonStore = create<LessonStore>()(
       deleteLesson: (lessonId) => set((state) => ({
         lessons: state.lessons.filter(lesson => lesson.id !== lessonId)
       })),
+
+      clearFeedEvents: () => set({ feedEvents: [] }),
+
 
       // Existing methods remain the same
       addFeedEvent: (event) => set((state) => ({

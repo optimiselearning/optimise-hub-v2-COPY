@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useLessonStore } from '@/store/lessonStore';
-import { FeedEvent } from '@/types';
+import { FeedEvent, UserRole } from '@/types';
 import { CheckCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Popover } from '@headlessui/react';
 import { useResolvedEvents } from '@/contexts/ResolvedEventsContext';
@@ -22,19 +22,12 @@ function formatDate(dateString: string) {
   });
 }
 export default function UserFeed() {
-  const { feedEvents } = useLessonStore();
+  const { feedEvents, clearFeedEvents } = useLessonStore();
   const [expandedEvents, setExpandedEvents] = useState<Set<string>>(new Set());
   const { resolvedEvents, setResolvedEvents } = useResolvedEvents();
 
   useEffect(() => {
-    // Only add test events if there are none
-    const hasAddedEvents = localStorage.getItem('hasAddedEvents');
-    if (!hasAddedEvents && feedEvents.length === 0) {
-      addTestEvents();
-      localStorage.setItem('hasAddedEvents', 'true');
-    }
-
-    // Set all unresolved events as expanded by default
+    // Remove the test events logic, just set unresolved events as expanded
     const unresolvedEvents = feedEvents
       .filter(event => !resolvedEvents.has(event.id))
       .map(event => event.id);
@@ -81,17 +74,32 @@ export default function UserFeed() {
     setExpandedEvents(new Set());
   };
 
+  const clearAll = () => {
+    clearFeedEvents();
+    setExpandedEvents(new Set());
+    setResolvedEvents(new Set());
+    localStorage.setItem('resolvedEvents', JSON.stringify([]));
+  };
+
   return (
     <main className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Activity Feed</h1>
         {feedEvents.length > 0 && (
-          <button
-            onClick={resolveAll}
-            className="px-2 py-1 text-sm font-bold text-black bg-white border border-black hover:bg-black hover:text-white transition-colors"
-          >
-            Resolve All
-          </button>
+          <div className="space-x-2">
+            <button
+              onClick={resolveAll}
+              className="px-2 py-1 text-sm font-bold text-black bg-white border border-black hover:bg-black hover:text-white transition-colors"
+            >
+              Resolve All
+            </button>
+            <button
+              onClick={clearAll}
+              className="px-2 py-1 text-sm font-bold text-white bg-black border border-black hover:bg-white hover:text-black transition-colors"
+            >
+              Clear Feed
+            </button>
+          </div>
         )}
       </div>
       <div className="space-y-4">
@@ -202,6 +210,38 @@ export default function UserFeed() {
   );
 }
 function addTestEvents() {
-    throw new Error('Function not implemented.');
-}
+  const { addFeedEvent } = useLessonStore();
 
+  // Add some sample feed events
+  const testEvents = [
+    {
+      action: 'reschedule_requested',
+      lessonId: 'test-lesson-1',
+      initiatedBy: 'student',
+      details: {
+        studentName: 'John Doe',
+        tutorName: 'Jane Smith',
+        oldDateTime: new Date(Date.now() - 86400000).toISOString(), // yesterday
+        newDateTime: new Date(Date.now() + 86400000).toISOString() // tomorrow
+      }
+    },
+    {
+      action: 'lesson_created',
+      lessonId: 'test-lesson-2',
+      initiatedBy: 'admin',
+      details: {
+        studentName: 'Alice Johnson',
+        tutorName: 'Bob Wilson',
+        dateTime: new Date(Date.now() + 172800000).toISOString() // day after tomorrow
+      }
+    }
+  ];
+
+  // Get addFeedEvent from the store
+  const store = useLessonStore.getState();
+  // Add each test event to the feed
+  testEvents.forEach(event => {
+    const { action, initiatedBy, ...rest } = event;
+    store.addFeedEvent({ ...rest, action: action as "reschedule_requested" | "reschedule_accepted" | "reschedule_declined", initiatedBy: initiatedBy as UserRole });
+  });
+}
