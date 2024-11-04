@@ -71,6 +71,56 @@ export default function StudentPage() {
     });
   };
 
+  const handleConfirmLesson = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson) return;
+
+    console.log('Before confirm - Lesson status:', lesson.status);
+
+    updateLesson(lessonId, { 
+      status: 'confirmed'
+    });
+
+    const updatedLesson = lessons.find(l => l.id === lessonId);
+    console.log('After confirm - Lesson status:', updatedLesson?.status);
+
+    addFeedEvent({
+      action: 'lesson_confirmed',
+      lessonId,
+      initiatedBy: 'student',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        dateTime: lesson.dateTime
+      }
+    });
+  };
+
+  const handleUndoConfirmLesson = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson || lesson.status !== 'confirmed') return;
+
+    console.log('Before unconfirm - Lesson status:', lesson.status);
+
+    updateLesson(lessonId, { 
+      status: 'pending'
+    });
+
+    const updatedLesson = lessons.find(l => l.id === lessonId);
+    console.log('After unconfirm - Lesson status:', updatedLesson?.status);
+
+    addFeedEvent({
+      action: 'lesson_unconfirmed',
+      lessonId,
+      initiatedBy: 'student',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        dateTime: lesson.dateTime
+      }
+    });
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">My Lessons</h1>
@@ -83,6 +133,8 @@ export default function StudentPage() {
             onRescheduleRequest={handleRescheduleRequest}
             onAcceptReschedule={handleAcceptReschedule}
             onDeclineReschedule={handleDeclineReschedule}
+            onConfirmLesson={handleConfirmLesson}
+            onUndoConfirmLesson={handleUndoConfirmLesson}
           />
         ))}
       </div>

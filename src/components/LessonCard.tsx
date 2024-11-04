@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { LessonCardProps } from '../types';
+import { formatDateTime } from '@/utils/dateFormat';
 
 // Helper function for consistent date formatting
 function formatDate(dateString: string) {
@@ -20,11 +21,22 @@ export default function LessonCard({
   onRescheduleRequest,
   onAcceptReschedule,
   onDeclineReschedule,
-  onDelete
+  onDelete,
+  onEdit,
+  onConfirmLesson,
+  onUndoConfirmLesson
 }: LessonCardProps) {
   const [newDateTime, setNewDateTime] = useState('');
   const [showRescheduleForm, setShowRescheduleForm] = useState(false);
-  
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedLesson, setEditedLesson] = useState({
+    studentName: lesson.studentName,
+    tutorName: lesson.tutorName,
+    dateTime: lesson.dateTime
+  });
+
+  console.log('Rendering LessonCard - Status:', lesson.status); // Debug log
+
   const handleRescheduleRequest = () => {
     if (newDateTime) {
       onRescheduleRequest(lesson.id, newDateTime);
@@ -33,76 +45,54 @@ export default function LessonCard({
     }
   };
 
+  const handleSaveEdit = () => {
+    if (onEdit) {
+      onEdit(lesson.id, editedLesson);
+      setIsEditing(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedLesson({
+      studentName: lesson.studentName,
+      tutorName: lesson.tutorName,
+      dateTime: lesson.dateTime
+    });
+    setIsEditing(false);
+  };
+
   return (
-    <div className="border p-4 mb-4 rounded-lg">
-      <div className="flex justify-between mb-2">
-        <div>
-          <p className="font-semibold">Student: <span className="font-light">{lesson.studentName}</span></p>
-          <p className="font-semibold">Tutor: <span className="font-light">{lesson.tutorName}</span></p>
-        </div>
-        <div>
-          <p className="text-sm">Lesson ID: {lesson.id}</p>
-        </div>
-      </div>
-      <p className="mb-2">Scheduled Time: {formatDate(lesson.dateTime)}</p>
-      
-      {!lesson.rescheduleRequest ? (
-        userRole !== 'admin' && (
-          <div className="mt-2">
-            {!showRescheduleForm ? (
-              <button
-                onClick={() => setShowRescheduleForm(true)}
-                className="bg-black border border-black hover:bg-white hover:border-black hover:text-black text-white px-4 py-2 rounded"
-              >
-                Request Reschedule
-              </button>
-            ) : (
-              <div>
-                <input
-                  type="datetime-local"
-                  value={newDateTime}
-                  onChange={(e) => setNewDateTime(e.target.value)}
-                  className="border p-2 mr-2"
-                />
-                <button
-                  onClick={handleRescheduleRequest}
-                  className="text-black bg-white border hover:bg-black hover:text-white border-black px-2 py-1 rounded mr-4"
+    <div className="p-4 border rounded-lg shadow-sm">
+      <div className="space-y-2">
+        <p><strong>Student:</strong> {lesson.studentName}</p>
+        <p><strong>Tutor:</strong> {lesson.tutorName}</p>
+        <p><strong>Scheduled Time:</strong> {lesson.dateTime}</p>
+        <p><strong>Status:</strong> {lesson.status}</p>
+        
+        <div className="flex gap-2">
+          {userRole === 'student' && (
+            <>
+              {lesson.status === 'confirmed' ? (
+                <button 
+                  onClick={() => onUndoConfirmLesson?.(lesson.id)}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded"
+                >
+                  Undo Confirm
+                </button>
+              ) : (
+                <button 
+                  onClick={() => onConfirmLesson(lesson.id)}
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
                 >
                   Confirm
                 </button>
-                <button
-                  onClick={() => setShowRescheduleForm(false)}
-                  className="text-black hover:font-semibold"
-                >
-                  Undo
-                </button>
-              </div>
-            )}
-          </div>
-        )
-      ) : (
-        <div className="mt-2 bg-gray-100 p-2 rounded">
-          <p className="font-semibold">Pending Reschedule Request</p>
-          <p>Proposed Time: {formatDate(lesson.rescheduleRequest.proposedDateTime)}</p>
-          <p>Requested by: <span className="capitalize font-semibold">{lesson.rescheduleRequest.requestedBy}</span></p>
-          {(userRole === 'admin' || userRole !== lesson.rescheduleRequest.requestedBy) && (
-            <div className="mt-2">
-              <button
-                onClick={() => onAcceptReschedule && onAcceptReschedule(lesson.id)}
-                className="bg-white border border-black hover:bg-black hover:border-black hover:text-white text-black px-4 py-2 rounded mr-2"
-              >
-                Accept
-              </button>
-              <button
-                onClick={() => onDeclineReschedule && onDeclineReschedule(lesson.id)}
-                className="bg-black border border-black hover:bg-white hover:border-black hover:text-black text-white px-4 py-2 rounded"
-              >
-                Decline
-              </button>
-            </div>
+              )}
+            </>
           )}
+          
+          {/* Other buttons */}
         </div>
-      )}
+      </div>
     </div>
   );
 }

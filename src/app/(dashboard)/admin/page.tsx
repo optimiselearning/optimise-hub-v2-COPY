@@ -87,6 +87,37 @@ export default function AdminPage() {
     console.log(`Admin: Reschedule request for lesson ${lessonId} has been declined.`);
   };
 
+  const handleDeleteLesson = (lessonId: string) => {
+    if (window.confirm('Are you sure you want to delete this lesson?')) {
+      deleteLesson(lessonId);
+      addFeedEvent({
+        action: 'lesson_deleted',
+        lessonId,
+        initiatedBy: 'admin',
+        details: {
+          studentName: lessons.find(l => l.id === lessonId)?.studentName || '',
+          tutorName: lessons.find(l => l.id === lessonId)?.tutorName || '',
+        }
+      });
+    }
+  };
+
+  const handleEditLesson = (lessonId: string, updates: Partial<Lesson>) => {
+    updateLesson(lessonId, updates);
+    addFeedEvent({
+      action: 'lesson_updated',
+      lessonId,
+      initiatedBy: 'admin',
+      details: {
+        studentName: updates.studentName || lessons.find(l => l.id === lessonId)?.studentName || '',
+        tutorName: updates.tutorName || lessons.find(l => l.id === lessonId)?.tutorName || '',
+        newDateTime: updates.dateTime,
+      }
+    });
+  };
+
+  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">Admin Dashboard</h1>
@@ -108,7 +139,7 @@ export default function AdminPage() {
                 type="text"
                 value={newLesson.studentName}
                 onChange={(e) => setNewLesson(prev => ({ ...prev, studentName: e.target.value }))}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border border-black"
                 required
               />
             </div>
@@ -118,7 +149,7 @@ export default function AdminPage() {
                 type="text"
                 value={newLesson.tutorName}
                 onChange={(e) => setNewLesson(prev => ({ ...prev, tutorName: e.target.value }))}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border border-black"
                 required
               />
             </div>
@@ -128,7 +159,7 @@ export default function AdminPage() {
                 type="datetime-local"
                 value={newLesson.dateTime}
                 onChange={(e) => setNewLesson(prev => ({ ...prev, dateTime: e.target.value }))}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-2 border border-black"
                 required
               />
             </div>
@@ -153,14 +184,47 @@ export default function AdminPage() {
 
       <div className="space-y-4">
         {lessons.map(lesson => (
-          <LessonCard
-            key={lesson.id}
-            lesson={lesson}
-            userRole="admin"
-            onRescheduleRequest={handleRescheduleRequest}
-            onAcceptReschedule={handleAcceptReschedule}
-            onDeclineReschedule={handleDeclineReschedule}
-          />
+          <div key={lesson.id} className="p-4 border rounded-lg shadow">
+            <div className="flex justify-between items-start">
+              <div>
+                <p><strong>Student:</strong> {lesson.studentName}</p>
+                <p><strong>Tutor:</strong> {lesson.tutorName}</p>
+                <p><strong>Scheduled Time:</strong> {new Date(lesson.dateTime).toLocaleString()}</p>
+                {editingLessonId === lesson.id && (
+                  <input
+                    type="datetime-local"
+                    defaultValue={new Date(lesson.dateTime).toISOString().slice(0, 16)}
+                    onChange={(e) => {
+                      handleEditLesson(lesson.id, { 
+                        dateTime: new Date(e.target.value).toISOString() 
+                      });
+                      setEditingLessonId(null); // Close the input after editing
+                    }}
+                    className="mt-2 p-2 border border-black"
+                    autoFocus
+                  />
+                )}
+              </div>
+              <div className="space-x-2">
+                <button
+                  onClick={() => {
+                    // If this lesson is currently being edited, clicking will close it
+                    // Otherwise, clicking will open it for editing
+                    setEditingLessonId(editingLessonId === lesson.id ? null : lesson.id)
+                  }}
+                  className="px-2 py-1 bg-white border border-black font-semibold text-black text-sm hover:bg-black hover:text-white"
+                >
+                  {editingLessonId === lesson.id ? 'Cancel' : 'Edit'}
+                </button>
+                <button
+                  onClick={() => handleDeleteLesson(lesson.id)}
+                  className="px-2 py-1 bg-black border border-black font-semibold text-white text-sm hover:bg-white hover:text-black"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
         ))}
       </div>
     </div>
