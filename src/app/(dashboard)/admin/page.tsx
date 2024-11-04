@@ -25,7 +25,8 @@ export default function AdminPage() {
     createLesson({
       studentName: newLesson.studentName,
       tutorName: newLesson.tutorName,
-      dateTime: new Date(newLesson.dateTime).toISOString()
+      dateTime: new Date(newLesson.dateTime).toISOString(),
+      status: 'pending'
     });
 
     // Reset form
@@ -189,7 +190,14 @@ export default function AdminPage() {
               <div>
                 <p><strong>Student:</strong> {lesson.studentName}</p>
                 <p><strong>Tutor:</strong> {lesson.tutorName}</p>
-                <p><strong>Scheduled Time:</strong> {new Date(lesson.dateTime).toLocaleString()}</p>
+                <p><strong>Scheduled Time:</strong> {new Date(lesson.dateTime).toLocaleString('en-GB', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                })}</p>
                 {editingLessonId === lesson.id && (
                   <input
                     type="datetime-local"

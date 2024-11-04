@@ -20,7 +20,7 @@ export type LessonCardProps = {
   onDeclineReschedule?: (lessonId: string) => void;
   onDelete?: (lessonId: string) => void;
   onEdit?: (lessonId: string, updatedLesson: Partial<Lesson>) => void;
-  onConfirmLesson: (lessonId: string) => void;
+  onConfirmLesson?: (lessonId: string) => void;
   onUndoConfirmLesson?: (lessonId: string) => void;
 };
 

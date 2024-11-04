@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { useLessonStore } from '@/store/lessonStore';
 import { useResolvedEvents } from '@/contexts/ResolvedEventsContext';
+import { usePathname } from 'next/navigation';
 
 export function DashboardNav() {
   const { feedEvents } = useLessonStore();
   const { resolvedEvents } = useResolvedEvents();
+  const pathname = usePathname();
   
   const unreadCount = feedEvents.filter(event => !resolvedEvents.has(event.id)).length;
 
@@ -16,25 +18,25 @@ export function DashboardNav() {
           <span className="text-xl font-semibold mr-10">OL Hub v2</span>
           <Link 
             href="/student" 
-            className="block  mr-4 text-black antialiased font-medium hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums"
+            className={`block mr-4 text-black antialiased hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums ${pathname === '/student' ? 'font-bold' : 'font-medium'}`}
           >
             Student Login
           </Link>
           <Link 
             href="/tutor" 
-            className="block  mr-4 text-black antialiased font-medium hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums"
+            className={`block mr-4 text-black antialiased hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums ${pathname === '/tutor' ? 'font-bold' : 'font-medium'}`}
           >
             Tutor Login
           </Link>
           <Link 
             href="/admin" 
-            className="block mr-4 text-black antialiased font-medium hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums"
+            className={`block mr-4 text-black antialiased hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums ${pathname === '/admin' ? 'font-bold' : 'font-medium'}`}
           >
             Admin Login
           </Link>
           <Link 
             href="/user-feed" 
-            className="block mr-[100px] text-black antialiased font-medium hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums relative"
+            className={`block mr-[100px] text-black antialiased hover:underline hover:underline-offset-2 hover:decoration-black hover:decoration-2 tabular-nums relative ${pathname === '/user-feed' ? 'font-bold' : 'font-medium'}`}
           >
             User Feed
             {unreadCount > 0 && (
