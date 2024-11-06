@@ -70,7 +70,7 @@ export default function LessonCard({
         <p><strong>Status:</strong> <span className="capitalize italic">{lesson.status}</span></p>
         
         <div className="flex gap-2">
-          {userRole === 'student' && !showRescheduleForm && (
+          {(userRole === 'student' || userRole === 'tutor') && !showRescheduleForm && (
             <>
               {lesson.status === 'confirmed' ? (
                 <button 
@@ -81,7 +81,7 @@ export default function LessonCard({
                 </button>
               ) : (
                 <button 
-                  onClick={() => onConfirmLesson(lesson.id)}
+                  onClick={() => onConfirmLesson?.(lesson.id)}
                   className="px-2 py-1 bg-white border border-black font-semibold text-black text-sm hover:bg-black hover:text-white"
                 >
                   Confirm

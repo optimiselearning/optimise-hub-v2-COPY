@@ -72,6 +72,46 @@ export default function TutorPage() {
     });
   };
 
+  const handleConfirmLesson = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson) return;
+
+    updateLesson(lessonId, { 
+      status: 'confirmed'
+    });
+
+    addFeedEvent({
+      action: 'lesson_confirmed',
+      lessonId,
+      initiatedBy: 'tutor',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        dateTime: lesson.dateTime
+      }
+    });
+  };
+
+  const handleUndoConfirmLesson = (lessonId: string) => {
+    const lesson = lessons.find(l => l.id === lessonId);
+    if (!lesson || lesson.status !== 'confirmed') return;
+
+    updateLesson(lessonId, { 
+      status: 'pending'
+    });
+
+    addFeedEvent({
+      action: 'lesson_unconfirmed',
+      lessonId,
+      initiatedBy: 'tutor',
+      details: {
+        studentName: lesson.studentName,
+        tutorName: lesson.tutorName,
+        dateTime: lesson.dateTime
+      }
+    });
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-6">My Students</h1>
@@ -84,6 +124,8 @@ export default function TutorPage() {
             onRescheduleRequest={handleRescheduleRequest}
             onAcceptReschedule={handleAcceptReschedule}
             onDeclineReschedule={handleDeclineReschedule}
+            onConfirmLesson={handleConfirmLesson}
+            onUndoConfirmLesson={handleUndoConfirmLesson}
           />
         ))}
       </div>

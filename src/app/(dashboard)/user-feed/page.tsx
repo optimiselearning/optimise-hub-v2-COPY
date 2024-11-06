@@ -81,7 +81,7 @@ export default function UserFeed() {
   };
 
   return (
-    <main className="p-4">
+    <main className="py-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Activity Feed</h1>
         {feedEvents.length > 0 && (
@@ -169,7 +169,7 @@ export default function UserFeed() {
               </div>
             </div>
             <p className="text-sm text-black mb-2">
-             <span className="font-semibold text-black">Made:</span> {formatDate(event.timestamp)}
+             <span className="font-semibold text-black">Time:</span> {formatDate(event.timestamp)}
             </p>
             {expandedEvents.has(event.id) && !resolvedEvents.has(event.id) && (
               <div className="border-t border-black pt-2">
