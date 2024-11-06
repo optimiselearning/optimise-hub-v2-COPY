@@ -122,6 +122,8 @@ export default function UserFeed() {
                     {event.action === 'reschedule_requested' && 'Reschedule Requested'}
                     {event.action === 'reschedule_accepted' && 'Reschedule Accepted'}
                     {event.action === 'reschedule_declined' && 'Reschedule Declined'}
+                    {event.action === 'lesson_confirmed' && 'Lesson Confirmed'}
+                    {event.action === 'lesson_unconfirmed' && 'Lesson Unconfirmed'}
                   </p>
                   <div className="flex items-center space-x-2">
                     {/* <p className="text-sm text-gray-500">
