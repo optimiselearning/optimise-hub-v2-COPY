@@ -15,10 +15,9 @@ function formatDate(dateString: string) {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-    hour: '2-digit',
+    hour: 'numeric',
     minute: '2-digit',
-    second: '2-digit',
-    hour12: false
+    hour12: true
   });
 }
 export default function UserFeed() {
@@ -118,16 +117,16 @@ export default function UserFeed() {
           >
             <div className="flex justify-between items-start">
               <div className="flex-1">
-                <div className="flex justify-between items-start mb-2">
+                <div className="flex justify-between items-center mb-2">
                   <p className="font-semibold text-lg">
                     {event.action === 'reschedule_requested' && 'Reschedule Requested'}
                     {event.action === 'reschedule_accepted' && 'Reschedule Accepted'}
                     {event.action === 'reschedule_declined' && 'Reschedule Declined'}
                   </p>
                   <div className="flex items-center space-x-2">
-                    <p className="text-sm text-gray-500">
+                    {/* <p className="text-sm text-gray-500">
                       {formatDate(event.timestamp)}
-                    </p>
+                    </p> */}
                     <button
                       onClick={() => toggleExpand(event.id)}
                       className="text-gray-400 hover:text-gray-600"
@@ -140,19 +139,19 @@ export default function UserFeed() {
                     </button>
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">
-                  By: <span className="capitalize">{event.initiatedBy}</span>
+                <p className="text-sm text-black">
+                <span className="font-semibold">By:</span> <span className="capitalize">{event.initiatedBy}</span>
                 </p>
-                <div className="mt-2">
+                {/* <div className="my-4">
                   <div><span className="font-medium">Student:</span> {event.details.studentName}</div>
                   <div><span className="font-medium">Tutor:</span> {event.details.tutorName}</div>
-                </div>
-                {event.details.oldDateTime && event.details.newDateTime && !expandedEvents.has(event.id) && (
+                </div> */}
+                {/* {event.details.oldDateTime && event.details.newDateTime && !expandedEvents.has(event.id) && (
                   <div className="mt-2 text-sm">
                     <div><span className="font-medium">Original:</span> {formatDate(event.details.oldDateTime)}</div>
                     <div><span className="font-medium">Requested:</span> {formatDate(event.details.newDateTime)}</div>
                   </div>
-                )}
+                )} */}
               </div>
               <div className="ml-4">
                 <button
@@ -167,10 +166,13 @@ export default function UserFeed() {
                 </button>
               </div>
             </div>
+            <p className="text-sm text-black mb-2">
+             <span className="font-semibold text-black">Made:</span> {formatDate(event.timestamp)}
+            </p>
             {expandedEvents.has(event.id) && !resolvedEvents.has(event.id) && (
               <div className="border-t border-black pt-2">
                 <div>
-                  <span className="font-semibold text-lg underline underline-offset-2 decoration-black decoration-2">
+                  <span className="font-semibold text-lg decoration-black decoration-2">
                     Lesson details
                   </span>
                   <div className="mt-2">
@@ -179,8 +181,8 @@ export default function UserFeed() {
                   </div>
                   {event.details.oldDateTime && event.details.newDateTime && (
                     <div className="mt-2 text-sm">
-                      <div><span className="font-semibold">Original:</span> <span className="text-black"> {formatDate(event.details.oldDateTime)}</span></div>
-                      <div><span className="font-semibold">Requested:</span> <span className="text-black"> {formatDate(event.details.newDateTime)}</span></div>
+                      <div><span className="text-black font-semibold">Original:</span> <span className="text-black"> {formatDate(event.details.oldDateTime)}</span></div>
+                      <div><span className="text-black font-semibold">Requested:</span> <span className="text-black"> {formatDate(event.details.newDateTime)}</span></div>
                     </div>
                   )}
                 </div>
