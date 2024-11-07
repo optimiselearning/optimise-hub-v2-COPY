@@ -35,8 +35,6 @@ export default function LessonCard({
     dateTime: lesson.dateTime
   });
 
-  console.log('Rendering LessonCard - Status:', lesson.status); // Debug log
-
   const isLessonConfirmed = lesson.studentStatus === 'confirmed' && lesson.tutorStatus === 'confirmed';
   const currentUserStatus = (userRole === 'student' ? lesson.studentStatus : lesson.tutorStatus) || 'pending';
   const otherUserStatus = (userRole === 'student' ? lesson.tutorStatus : lesson.studentStatus) || 'pending';
