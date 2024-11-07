@@ -37,6 +37,11 @@ export default function LessonCard({
 
   console.log('Rendering LessonCard - Status:', lesson.status); // Debug log
 
+  const isLessonConfirmed = lesson.studentStatus === 'confirmed' && lesson.tutorStatus === 'confirmed';
+  const currentUserStatus = (userRole === 'student' ? lesson.studentStatus : lesson.tutorStatus) || 'pending';
+  const otherUserStatus = (userRole === 'student' ? lesson.tutorStatus : lesson.studentStatus) || 'pending';
+  const otherUserRole = userRole === 'student' ? 'Tutor' : 'Student';
+
   const handleRescheduleRequest = () => {
     if (newDateTime) {
       onRescheduleRequest(lesson.id, newDateTime);
@@ -67,12 +72,25 @@ export default function LessonCard({
         <p><strong>Student:</strong> {lesson.studentName}</p>
         <p><strong>Tutor:</strong> {lesson.tutorName}</p>
         <p><strong>Scheduled Time:</strong> {formatDate(lesson.dateTime)}</p>
-        <p><strong>Status:</strong> <span className="capitalize italic">{lesson.status}</span></p>
+        <div className="space-y-1">
+          <p>
+            <strong>Your status:</strong>{' '}
+            <span className="capitalize italic">{currentUserStatus}</span>
+          </p>
+          <p>
+            <strong>{otherUserRole} status:</strong>{' '}
+            <span className="capitalize italic">{otherUserStatus}</span>
+          </p>
+          <p>
+            <strong>Lesson status:</strong>{' '}
+            <span className="capitalize italic">{isLessonConfirmed ? 'confirmed' : 'pending'}</span>
+          </p>
+        </div>
         
         <div className="flex gap-2">
           {(userRole === 'student' || userRole === 'tutor') && !showRescheduleForm && (
             <>
-              {lesson.status === 'confirmed' ? (
+              {currentUserStatus === 'confirmed' ? (
                 <button 
                   onClick={() => onUndoConfirmLesson?.(lesson.id)}
                   className="px-2 py-1 bg-white border border-black font-semibold text-black text-sm hover:bg-black hover:text-white"

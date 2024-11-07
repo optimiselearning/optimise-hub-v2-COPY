@@ -26,7 +26,8 @@ export default function AdminPage() {
       studentName: newLesson.studentName,
       tutorName: newLesson.tutorName,
       dateTime: new Date(newLesson.dateTime).toISOString(),
-      status: 'pending'
+      studentStatus: 'pending',
+      tutorStatus: 'pending'
     });
 
     // Reset form

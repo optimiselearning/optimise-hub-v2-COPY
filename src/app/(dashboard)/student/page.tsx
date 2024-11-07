@@ -75,14 +75,9 @@ export default function StudentPage() {
     const lesson = lessons.find(l => l.id === lessonId);
     if (!lesson) return;
 
-    console.log('Before confirm - Lesson status:', lesson.status);
-
     updateLesson(lessonId, { 
-      status: 'confirmed'
+      studentStatus: 'confirmed'
     });
-
-    const updatedLesson = lessons.find(l => l.id === lessonId);
-    console.log('After confirm - Lesson status:', updatedLesson?.status);
 
     addFeedEvent({
       action: 'lesson_confirmed',
@@ -98,16 +93,11 @@ export default function StudentPage() {
 
   const handleUndoConfirmLesson = (lessonId: string) => {
     const lesson = lessons.find(l => l.id === lessonId);
-    if (!lesson || lesson.status !== 'confirmed') return;
-
-    console.log('Before unconfirm - Lesson status:', lesson.status);
+    if (!lesson) return;
 
     updateLesson(lessonId, { 
-      status: 'pending'
+      studentStatus: 'pending'
     });
-
-    const updatedLesson = lessons.find(l => l.id === lessonId);
-    console.log('After unconfirm - Lesson status:', updatedLesson?.status);
 
     addFeedEvent({
       action: 'lesson_unconfirmed',

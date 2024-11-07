@@ -77,7 +77,7 @@ export default function TutorPage() {
     if (!lesson) return;
 
     updateLesson(lessonId, { 
-      status: 'confirmed'
+      tutorStatus: 'confirmed'
     });
 
     addFeedEvent({
@@ -94,10 +94,10 @@ export default function TutorPage() {
 
   const handleUndoConfirmLesson = (lessonId: string) => {
     const lesson = lessons.find(l => l.id === lessonId);
-    if (!lesson || lesson.status !== 'confirmed') return;
+    if (!lesson) return;
 
     updateLesson(lessonId, { 
-      status: 'pending'
+      tutorStatus: 'pending'
     });
 
     addFeedEvent({

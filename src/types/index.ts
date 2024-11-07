@@ -9,7 +9,8 @@ export interface Lesson {
     proposedDateTime: string;
     requestedBy: UserRole;
   };
-  status?: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  studentStatus: 'pending' | 'confirmed';
+  tutorStatus: 'pending' | 'confirmed';
 }
 
 export type LessonCardProps = {
