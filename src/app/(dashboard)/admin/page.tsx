@@ -186,7 +186,7 @@ export default function AdminPage() {
 
       <div className="space-y-4">
         {lessons.map(lesson => (
-          <div key={lesson.id} className="p-4 border rounded-lg shadow">
+          <div key={lesson.id} className="p-4 border border-black shadow-md">
             <div className="flex justify-between items-start">
               <div>
                 <p><strong>Student:</strong> {lesson.studentName}</p>

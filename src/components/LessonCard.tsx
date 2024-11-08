@@ -65,7 +65,7 @@ export default function LessonCard({
   };
 
   return (
-    <div className="p-4 border shadow-sm">
+    <div className="p-4 border border-black shadow-md">
       <div className="space-y-2">
         <p><strong>Student:</strong> {lesson.studentName}</p>
         <p><strong>Tutor:</strong> {lesson.tutorName}</p>
